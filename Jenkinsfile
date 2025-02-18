@@ -38,5 +38,22 @@ pipeline {
                 }
             }
         }
+
+	stage('Deploy to AWS EC2') {
+            steps {
+                script {
+                    sshagent(['ec2-ssh-key-id']) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ec2-user@3.107.27.207 <<EOF
+                        docker pull $DOCKER_IMAGE:latest
+                        docker stop my-web-app || true
+                        docker rm my-web-app || true
+                        docker run -d --name my-web-app -p 80:80 $DOCKER_IMAGE:latest
+                        EOF
+                        """
+                    }
+                }
+            }
+
    }
 }
