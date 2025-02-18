@@ -46,9 +46,9 @@ pipeline {
                         sh """
                         ssh -o StrictHostKeyChecking=no ec2-user@3.107.27.207 <<EOF
                         docker pull $DOCKER_IMAGE:latest
-                        docker stop my-web-app || true
-                        docker rm my-web-app || true
-                        docker run -d --name my-web-app -p 80:80 $DOCKER_IMAGE:latest
+                        docker ps -q -f name=my-web-app && docker stop my-web-app || true
+			docker ps -a -q -f name=my-web-app && docker rm my-web-app || true
+                        docker run -d --name my-web-app -p 8081:80 $DOCKER_IMAGE:latest
                         EOF
                         """
                     }
